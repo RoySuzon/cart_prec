@@ -1,23 +1,21 @@
+import 'package:cart_prec/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:cart_prec/features/cart/presentation/screens/cart_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import '../../../../core/domain/entities/cart_item_entity.dart';
-import '../../../../core/domain/repositories/i_cart_repository.dart';
-import '../../../../injection_container.dart';
-import '../screens/cart_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CartIcon extends StatelessWidget {
   const CartIcon({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Resolve the dependency using get_it
-    final cartRepository = sl<ICartRepository>();
-    
-    return ValueListenableBuilder<Box<CartItemEntity>>(
-      valueListenable: cartRepository.getCartListenable(),
-      builder: (context, box, _) {
-        final totalItems = box.values.fold<int>(0, (sum, item) => sum + item.quantity);
-        
+    // BlocBuilder listens to the CartBloc
+    return BlocBuilder<CartBloc, CartState>(
+      builder: (context, state) {
+        num totalItems = 0;
+        if (state is CartLoadedState) {
+          totalItems = state.totalItemCount;
+        }
+
         return Stack(
           alignment: Alignment.center,
           children: [
@@ -40,7 +38,10 @@ class CartIcon extends StatelessWidget {
                     color: Colors.red,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                  constraints: const BoxConstraints(
+                    minWidth: 16,
+                    minHeight: 16,
+                  ),
                   child: Text(
                     '$totalItems',
                     style: const TextStyle(color: Colors.white, fontSize: 10),
