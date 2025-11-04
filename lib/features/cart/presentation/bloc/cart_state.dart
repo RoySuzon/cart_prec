@@ -18,11 +18,13 @@ class CartLoadedState extends CartState {
     this.totalPrice = 0.0,
     this.totalItemCount = 0,
   });
-  
+
   // Helper function to get quantity for a specific product
   int getQuantity(String productId) {
     try {
-      return cartItems.firstWhere((item) => item.product.id == productId).quantity;
+      return cartItems
+          .firstWhere((item) => item.product.id == productId)
+          .quantity;
     } catch (e) {
       return 0; // Not found
     }
@@ -33,8 +35,8 @@ class CartLoadedState extends CartState {
 }
 
 class CartErrorState extends CartState {
-  final String message;
   const CartErrorState(this.message);
+  final String message;
   @override
   List<Object> get props => [message];
 }

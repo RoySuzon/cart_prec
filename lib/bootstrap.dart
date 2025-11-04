@@ -5,8 +5,8 @@ import 'package:bloc/bloc.dart';
 import 'package:cart_prec/core/domain/entities/cart_item_entity.dart';
 import 'package:cart_prec/core/domain/entities/product_entity.dart';
 import 'package:cart_prec/injection_container.dart' as di;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -28,8 +28,14 @@ class AppBlocObserver extends BlocObserver {
 
 Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   WidgetsFlutterBinding.ensureInitialized();
-  final appDocumentDir = await getApplicationDocumentsDirectory();
-  await Hive.initFlutter(appDocumentDir.path);
+  if (kIsWeb) {
+    // Web: Hive handles IndexedDB internally
+    await Hive.initFlutter();
+  } else {
+    final appDocumentDir = await getApplicationDocumentsDirectory();
+    await Hive.initFlutter(appDocumentDir.path);
+  }
+
   // 2. Register Adapters (Import from core module)
   Hive
     ..registerAdapter(ProductEntityAdapter())

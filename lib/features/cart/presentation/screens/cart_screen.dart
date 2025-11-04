@@ -48,9 +48,14 @@ class CartScreen extends StatelessWidget {
                         subtitle: Text(
                           'Price: \$${item.product.price.toStringAsFixed(2)}',
                         ),
-                        leading: Text(
-                          '${item.quantity}x',
-                          style: Theme.of(context).textTheme.titleMedium,
+                        leading: IconButton(
+                          onPressed: () => context.read<CartBloc>().add(
+                            UpdateCartQuantityEvent(
+                              item.product.id,
+                              0,
+                            ),
+                          ),
+                          icon: const Icon(Icons.delete),
                         ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -65,6 +70,10 @@ class CartScreen extends StatelessWidget {
                                   ),
                                 );
                               },
+                            ),
+                            Text(
+                              '${item.quantity}x',
+                              style: Theme.of(context).textTheme.titleMedium,
                             ),
                             IconButton(
                               icon: const Icon(Icons.add_circle),
